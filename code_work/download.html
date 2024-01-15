@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Visualization</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+
+        h1 {
+            text-align: center;
+        }
+
+        h2, h3, h4, h5 {
+            text-align: center;
+        }
+        button {
+            text-align: center;
+            border-width: 1cap;
+            padding: 0.8%;
+            background-color: #458e68;
+            align-self: center;
+
+        }
+    </style>
+</head>
+<body style="background-color:#7aa6d3">
+    <h1>Final Processed Data</h1>
+
+    <table id="data-table">
+        <thead>
+            <tr id="headers-row"></tr>
+        </thead>
+        <tbody id="data-rows"></tbody>
+    </table>
+    <div class = button> 
+        <button onclick="downloadData()">Download Data</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script>
+        function fetchData() {
+            fetch('http://127.0.0.1:8000/data')  // Replace with your Sanic API endpoint
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('data-table');
+                    const headersRow = document.getElementById('headers-row');
+                    const tbody = document.getElementById('data-rows');
+
+                    // Add table headers dynamically
+                    Object.keys(data[0]).forEach(column => {
+                        const th = document.createElement('th');
+                        th.textContent = column;
+                        headersRow.appendChild(th);
+                    });
+
+                    // Add table rows dynamically
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        Object.values(item).forEach(value => {
+                            const td = document.createElement('td');
+                            td.textContent = value;
+                            row.appendChild(td);
+                        });
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        function downloadData() {
+            fetch('http://127.0.0.1:8000/data')  // Replace with your Sanic API endpoint
+                .then(response => response.json())
+                .then(jsonData => {
+                // Convert JSON data to CSV format
+                const csvData = Papa.unparse(jsonData, { header: true });
+
+                // Create a Blob from the CSV data
+                const blob = new Blob([csvData], { type: 'text/csv' });
+
+                // Create a temporary URL for the Blob
+                const url = URL.createObjectURL(blob);
+
+                // Create an anchor element and set the download attributes
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'data.csv';
+
+                // Programmatically click the link to trigger the download
+                link.click();
+                })
+                .catch(error => {
+                console.error('Error downloading data:', error);
+                });
+            }
+
+        fetchData();
+    </script>
+    <h3>NOTE: this is the subset data being shown</h3>
+
+</body>
+</html>

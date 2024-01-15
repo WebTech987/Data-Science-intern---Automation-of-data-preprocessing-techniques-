@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Result</title>
+    <style>
+        /* Add your custom styles here */
+        body {
+            font-family: Arial, sans-serif;
+            /* text-align: center; */
+            margin-top: 100px;
+            /* background-color: #27b1d7; */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2, h3, h4, h5 {
+            text-align: center;
+        }
+
+        table {
+            margin: 10px 10px;
+            border-collapse: collapse;
+            /* background-color: #27b1d7; */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #cccccc;
+        }
+
+  /*      th {
+             background-color: #27b1d7; 
+        }
+*/
+   
+        .box {
+            display: flex; 
+            margin-left: -1rem;
+            margin-right: -1rem; 
+            flex-wrap: wrap; 
+            }
+
+        .container {
+            /* background-color: #E5E7EB; */
+            /* color: #111827; */
+            padding-left: 1rem;
+            padding-right: 1rem; 
+            width: 100%; 
+        }
+
+        .header {
+            display: flex;
+            padding: 1rem;
+        }
+
+        .headerText {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+
+        .tableContainer {
+            overflow-x: auto; 
+            max-width: 100%; 
+            /* display: flex; */
+            /* padding-left: 0.75rem; */
+            /* padding-right: 0.75rem; */
+            /* padding-top: 1rem; */
+            /* padding-bottom: 1rem; */
+            /* justify-content: center; */
+        }
+
+        .table {
+            /* margin-bottom: 1rem; */
+            /* background-color: #ffffff; */
+            /* width: 100%; */
+            /* border-radius: 0.25rem; */
+            /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
+            width: 100%; 
+            table-layout: auto; 
+        }
+
+        .tableRow {
+            background-color: rgb(20 184 166);
+            text-align: center;
+        }
+
+        .tableHeadData {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            color: black;
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            width: 16.666667%;
+            border-left-width: 1px;
+            border-color: transparent;
+        }
+        .sectionBox{
+            width: 100%; 
+            margin-left: auto;
+            margin-right: auto; 
+        }
+
+        .hidden {
+            display: none;
+        }
+
+    </style>
+
+</head>
+
+<!--------First Table to Show Data Description -->
+<body style  = "background: linear-gradient(#a8b4ca, #243b55);">
+    <h1><!------->---Welcome for Data Pre-processing---<!-------></h1>
+    <section>
+        <div class="sectionBox">
+
+            <div class="box">
+                <div class="container">
+                    <h1>Data Summary</h1>
+                    <div>
+                        <h4>shape of the Dataset</h4>
+                        <h5>Number of rows: {rows} and Number of columns: {columns}</h5>  
+                    </div>
+                    <div class="tableContainer">
+                        <table id="summaryTable" class="table">
+    
+                            <thead>
+                                <tr class="tableRow">
+                                    <th class="tableHeadData">
+                                        Column Name
+                                    </th>
+                                    <th class="tableHeadData">
+                                        Null Values count
+                                    </th>
+                                    <th class="tableHeadData">
+                                        No of sub-cat present
+                                    </th>
+                                    <th class="tableHeadData">
+                                        Sub-cat, frequency
+                                    </th>
+                                    <!-- <th
+                                              class="w-1/6 min-w-[160px] py-4 px-3 text-lg font-semibold text-white lg:py-7 lg:px-4"
+                                            >
+                                              Transfer
+                                            </th>
+                                            <th
+                                              class="w-1/6 min-w-[160px] border-r border-transparent py-4 px-3 text-lg font-semibold text-white lg:py-7 lg:px-4"
+                                            >
+                                              Register
+                                            </th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <h2>Columnwise Summary for data</h2>
+                            </tbody>
+                        </table>
+    
+                    </div>
+                </div>
+
+            </div>
+    </section>
+    </div>
+    <script>
+        // Get the summary data from the server
+        const columnSummaries = {column_summaries};
+    
+        // Generate table rows dynamically
+        const tableBody = document.querySelector('#summaryTable tbody');
+        columnSummaries.forEach(summary => {
+            const row = document.createElement('tr');
+    
+            const columnNameCell = document.createElement('td');
+            columnNameCell.textContent = summary.column_name;
+            row.appendChild(columnNameCell);
+    
+            const nullValuesCell = document.createElement('td');
+            nullValuesCell.textContent = summary.null_values;
+            row.appendChild(nullValuesCell);
+    
+            const uniqueValuesCell = document.createElement('td');
+            uniqueValuesCell.textContent = summary.unique_values;
+            row.appendChild(uniqueValuesCell);
+    
+            const valueCountsCell = document.createElement('td');
+            const valueCountsSelect = document.createElement('select');
+    
+            if (Array.isArray(summary.value_counts[1])) {
+                // Add options to the dropdown
+                summary.value_counts.forEach(value => {
+                    const option = document.createElement('option');
+                    option.textContent = value ;
+                    valueCountsSelect.appendChild(option);
+                });
+            } else {
+                // Create options with the keys
+                let empty = true;
+                for (const key in summary.value_counts) {
+                    empty = false;
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = key + ", " + (summary.value_counts[key]);
+                    valueCountsSelect.appendChild(option);
+                }
+    
+                if (empty) {
+                    const option = document.createElement('option');
+                    option.textContent = 'No data available';
+                    valueCountsSelect.appendChild(option);
+                }
+            }
+    
+            valueCountsCell.appendChild(valueCountsSelect);
+            row.appendChild(valueCountsCell);
+            tableBody.appendChild(row);
+        });
+    </script>
+</body>
+
+
+
+<!--------Returning the Graph containing null values and their count based on columns------>
+<style>
+    .graph-container {
+        position: relative;
+        text-align: center;
+        width: 700px; 
+        margin-left: auto;
+        margin-right: auto; 
+        overflow: auto;
+    }
+    .graph {
+        width : 100%;
+        width : 700px;
+        height: 400px;
+    }
+</style>
+
+<body>
+    <h2>Categorical - plot</h2>
+    <h5>X- axis refers - names of the categories // y- axis refers the null-values count</h5>
+        <div class="graph-container">
+            <img class="graph" src="/graph" alt="Graph">
+        </div>
+</body>
+
+
+<!---- Getting the selected columns from the user side  ---->
+<style>
+    /* Center the dropdown menus */
+.dropdown {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style the dropdown menu as a box */
+.dropdown select {
+  width: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the table */
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Style the table head */
+.table thead {
+  background-color: #f2f2f2;
+}
+
+/* Style the table header cells */
+.table th {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Style the table body cells */
+.table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+
+.my-button {
+    position: absolute;
+    top: 0.5%;
+    left: 0%;
+    transform: translate(0%, 0%);
+    padding: 0px 0px;
+    background-color: #ff6600;
+    color: #392626;
+    border: none;
+    border-radius: 0.1px;
+    cursor: pointer;
+}
+
+.container1 {
+    position: relative;
+    width: 60px;
+    height: 20px;
+    top: 60%;
+    right : -50%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    transform: translate(-70%, 20%);
+}
+
+</style>
+
+<body>
+    <h2>Select Columns for further Processing</h2>
+
+    <div id="dropdown-container">
+        <!-- Dropdown menus will be inserted here -->
+    </div>
+        <div class = container1>
+            <div class = "my-button">      
+                <button onclick="getSelectedValues()">Please Submit</button>
+            </div>
+        </div>
+        <h5 id = "message"></h5>
+        <script>
+            // Array of elements
+            var jsonData = {df_json};
+            
+            // Store JSON values in an array
+            var elementss = ['select'];
+            for (var i = 0; i < jsonData.length; i++) {
+                var value = jsonData[i];
+                var name = Object.values(value)[0];
+                elementss.push(name);
+            }
+
+            // Create dropdown menus
+            var dropdownMenus = '';
+            for (var i = 1; i < elementss.length; i++) {
+                var dropdownMenu = '<div class="dropdown"><select id="dropdown-' + i + '">';
+                for (var j = 0; j < elementss.length; j++) {
+                    dropdownMenu += '<option value="' + elementss[j] + '">' + elementss[j] + '</option>';
+                }
+                dropdownMenu += '</select></div>';
+                dropdownMenus += dropdownMenu;
+            }
+
+            // Append dropdown menus to the page
+            document.getElementById('dropdown-container').innerHTML = dropdownMenus;
+
+
+            // Function to get the selected values
+            function getSelectedValues() {
+                var selectedValues = [];
+                var dropdowns = document.getElementsByTagName('select');
+                for (var j = i-1; j < dropdowns.length; j++) {
+                    var selectedValue = dropdowns[j].value;
+                    if (selectedValue !== "select"){
+                        selectedValues.push(selectedValue);
+                    }
+                }
+
+                // Display the selected column names and the "Thanks for selecting!" message
+                var messageElement = document.getElementById("message");
+                messageElement.innerHTML = "Thanks for selecting! Selected columns: " + selectedValues.join(", ");
+                // Send the selected values to the server or perform desired action
+
+                // Send the selected values to the server
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/submit", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // Handle the response from the server
+                        console.log(xhr.responseText);
+                    }
+                };
+                var data = JSON.stringify({ columns: selectedValues });
+                xhr.send(data);
+            }
+        </script>
+    </div>
+</body>
+
+
+<body>
+    <h2>Hope this provides you the basic structure of your data!</h2>
+</body>
+</html>
+
+<!---------Code to route to the new page using the server---------->
+  <body>
+    <h3>To proceed further for Data Processing</h3>
+    <h3><a href="http://127.0.0.1:8000/cleaning" onclick="openHtmlFile()">Click here</a></h3>
+  </body>
+
+
